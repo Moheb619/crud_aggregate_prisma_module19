@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           BigInt    @id @default(autoincrement()) @map("id")
+  firstName    String    @db.VarChar(100)
+  middleName   String?   @db.VarChar(100)
+  lastName     String    @db.VarChar(100)
+  mobile       String    @db.VarChar(100)
+  email        String    @unique @db.VarChar(100)
+  password     String    @db.VarChar(100)
+  admin        Boolean   @map("admin")
+  registeredAt DateTime? @map("registeredAt")
+  lastLogin    DateTime? @map("lastLogin")
+  createAt     DateTime  @default(now()) @map("createAt")
+  updateAt     DateTime  @updatedAt @map("updateAt")
+  products     Product[]
+  carts        Cart[]
+  orders       Order[]
+}
+
+model Category {
+  id        BigInt   @id @default(autoincrement()) @map("id")
+  title     String   @db.VarChar(100)
+  metaTitle String   @db.VarChar(100)
+  slug      String   @db.VarChar(100)
+  content   String   @db.VarChar(100)
+  createAt  DateTime @default(now()) @map("createAt")
+  updateAt  DateTime @updatedAt @map("updateAt")
+}
+
+model Product {
+  id          BigInt          @id @default(autoincrement()) @map("id")
+  firstName   String          @db.VarChar(100)
+  metaTitle   String          @db.VarChar(100)
+  slug        String          @db.VarChar(100)
+  summary     String          @db.VarChar(100)
+  price       Int             @map("price")
+  discount    Int?            @map("discount")
+  userId      BigInt          @map("userld")
+  publishedAt DateTime?       @map("publishedAt")
+  startsAt    DateTime?       @map("startsAt")
+  endsAt      DateTime?       @map("endsAt")
+  createAt    DateTime        @default(now()) @map("createAt")
+  updateAt    DateTime        @updatedAt @map("updateAt")
+  user        User            @relation(fields: [userId], references: [id])
+  productMeta ProductMeta[]
+  reviews     ProductReview[]
+}
+
+model ProductMeta {
+  id        BigInt   @id @default(autoincrement()) @map("id")
+  key       String   @db.VarChar(100)
+  content   String   @db.VarChar(100)
+  productId BigInt   @map("productld")
+  product   Product  @relation(fields: [productId], references: [id])
+  createAt  DateTime @default(now()) @map("createAt")
+  updateAt  DateTime @updatedAt @map("updateAt")
+}
+
+model ProductReview {
+  id        BigInt   @id @default(autoincrement()) @map("id")
+  title     String   @db.VarChar(100)
+  rating    String   @db.VarChar(100)
+  content   String   @db.VarChar(100)
+  productId BigInt   @map("productld")
+  product   Product  @relation(fields: [productId], references: [id])
+  createAt  DateTime @default(now()) @map("createAt")
+  updateAt  DateTime @updatedAt @map("updateAt")
+}
+
+model Order {
+  id           BigInt   @id @default(autoincrement()) @map("id")
+  title        String   @db.VarChar(100)
+  token        String   @db.VarChar(100)
+  subTotal     Int      @map("subTotal")
+  itemDiscount Int?     @map("itemDiscount")
+  tax          Int      @map("tax")
+  total        Int      @map("total")
+  discount     Int?     @map("discount")
+  grandTotal   Int      @map("grandTotal")
+  firstName    String   @db.VarChar(100)
+  middleName   String?  @db.VarChar(100)
+  lastName     String   @db.VarChar(100)
+  mobile       String   @db.VarChar(100)
+  email        String   @db.VarChar(100)
+  city         String   @db.VarChar(100)
+  country      String   @db.VarChar(100)
+  userId       BigInt   @map("userld")
+  user         User     @relation(fields: [userId], references: [id])
+  createAt     DateTime @default(now()) @map("createAt")
+  updateAt     DateTime @updatedAt @map("updateAt")
+}
+
+model Cart {
+  id         BigInt   @id @default(autoincrement()) @map("id")
+  title      String   @db.VarChar(100)
+  sessionId  String   @db.VarChar(100)
+  token      String   @db.VarChar(100)
+  status     String   @db.VarChar(100)
+  firstName  String   @db.VarChar(100)
+  middleName String?  @db.VarChar(100)
+  lastName   String   @db.VarChar(100)
+  mobile     String   @db.VarChar(100)
+  email      String   @db.VarChar(100)
+  city       String   @db.VarChar(100)
+  country    String   @db.VarChar(100)
+  userId     BigInt   @map("userld")
+  user       User     @relation(fields: [userId], references: [id])
+  createAt   DateTime @default(now()) @map("createAt")
+  updateAt   DateTime @updatedAt @map("updateAt")
+}
